@@ -21,6 +21,14 @@ dependencies {
 * Jitpack.io: [![](https://jitpack.io/v/alimninja/horcrux.svg)](https://jitpack.io/#alimninja/horcrux)
 
 
+### Ресурси
+
+```string.xml
+    <string name="eimzo_not_install">У вас не установлен E-IMZO. Перейти в Google Play?</string>
+    <string name="yes">Да</string>
+    <string name="no">Нет</string>
+```
+
 ### Сборка
 
 У вас должен быть API_KEY, сгенерированный специально для вашего applicationId. Для получения дополнительной информации обращайтесь по номеру (71-202-3232)
