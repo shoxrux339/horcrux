@@ -18,13 +18,15 @@ class Horcrux : Activity(), DialogInterface.OnClickListener {
     var tag: String = "HORCRUX"
     var appKey = BuildConfig.API_KEY
 
-    private lateinit var pkcs7: String
+    private var pkcs7: String = ""
     private var serialNumber: CharSequence? = null
     private var signature: ByteArray? = null
     private var subject: CharSequence? = null
 
     private var regex = ",?(\\\\s)*([A-Za-z]+|[0-9\\\\.]+)=([^=,\\\\]*),?(\\\\s)*"
     private var p: Pattern = Pattern.compile(regex)
+
+    private var context: Activity? = null
 
     /**
      * @param context      Current activity
@@ -36,6 +38,7 @@ class Horcrux : Activity(), DialogInterface.OnClickListener {
         massage: String,
         serialNumber: String?
     ) {
+        this.context = context
         val message = massage.toByteArray()
         val intent = Intent()
         intent.setClassName(
@@ -53,6 +56,7 @@ class Horcrux : Activity(), DialogInterface.OnClickListener {
      * @param massage String value to generate PKCS7
      */
     fun createPKCS7(context: Activity, massage: String) {
+        this.context = context
         val serialNumber = ""
         val message = massage.toByteArray()
         val intent = Intent()
@@ -171,7 +175,7 @@ class Horcrux : Activity(), DialogInterface.OnClickListener {
      * Save temp data   FIXME
      */
     private fun writeString(key: String?, property: String?) {
-        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(MyApplication.context)
+        val sharedPreferences = PreferenceManager.getDefaultSharedPreferences(this.context)
         val editor: SharedPreferences.Editor = sharedPreferences.edit()
         editor.putString(key, property)
         editor.apply()
@@ -182,7 +186,7 @@ class Horcrux : Activity(), DialogInterface.OnClickListener {
      */
     private fun readString(key: String?): String? {
         val sharedPreferences = PreferenceManager
-            .getDefaultSharedPreferences(MyApplication.context)
+            .getDefaultSharedPreferences(this.context)
         return sharedPreferences.getString(key, "")
     }
 
