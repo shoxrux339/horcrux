@@ -13,7 +13,7 @@ import androidx.appcompat.app.AlertDialog
 import uz.sicnt.horcrux.Constants.*
 import java.util.regex.Pattern
 
-class Horcrux : Activity(), DialogInterface.OnClickListener {
+class Horcrux {
 
     var tag: String = "HORCRUX"
     var appKey = BuildConfig.API_KEY
@@ -39,6 +39,10 @@ class Horcrux : Activity(), DialogInterface.OnClickListener {
         serialNumber: String?
     ) {
         this.context = context
+        if (!isEImzoInstalled(context)) {
+            showInstallDialog(context)
+            return
+        }
         val message = massage.toByteArray()
         val intent = Intent()
         intent.setClassName(
@@ -57,6 +61,10 @@ class Horcrux : Activity(), DialogInterface.OnClickListener {
      */
     fun createPKCS7(context: Activity, massage: String) {
         this.context = context
+        if (!isEImzoInstalled(context)) {
+            showInstallDialog(context)
+            return
+        }
         val serialNumber = ""
         val message = massage.toByteArray()
         val intent = Intent()
@@ -145,12 +153,21 @@ class Horcrux : Activity(), DialogInterface.OnClickListener {
     /**
      * Show installation dialog
      */
-    fun showInstallDialog() {
-        AlertDialog.Builder(this, R.style.exitDialog)
-            .setMessage(getString(R.string.eimzo_not_install))
+    fun showInstallDialog(activity: Activity) {
+
+        AlertDialog.Builder(activity, R.style.exitDialog)
+            .setMessage(context?.getString(R.string.eimzo_not_install))
             .setCancelable(false)
-            .setPositiveButton(R.string.yes, this)
-            .setNegativeButton(R.string.no, this).create().show()
+            .setPositiveButton(R.string.yes) { dialog, which ->
+                run {
+                    onClickDialog(dialog, which)
+                }
+            }
+            .setNegativeButton(R.string.no) { dialog, which ->
+                run {
+                    onClickDialog(dialog, which)
+                }
+            }.create().show()
     }
 
     /**
@@ -190,17 +207,17 @@ class Horcrux : Activity(), DialogInterface.OnClickListener {
         return sharedPreferences.getString(key, "")
     }
 
-    override fun onClick(dialog: DialogInterface, which: Int) {
+    fun onClickDialog(dialog: DialogInterface, which: Int) {
         when (which) {
             DialogInterface.BUTTON_POSITIVE -> try {
-                startActivity(
+                context?.startActivity(
                     Intent(
                         Intent.ACTION_VIEW,
                         Uri.parse("market://details?id=$E_IMZO_APP")
                     )
                 )
             } catch (e: ActivityNotFoundException) {
-                startActivity(
+                context?.startActivity(
                     Intent(
                         Intent.ACTION_VIEW,
                         Uri.parse("https://play.google.com/store/apps/details?id=$E_IMZO_APP")
